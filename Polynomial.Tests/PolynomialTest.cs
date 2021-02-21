@@ -374,8 +374,7 @@ namespace PolynomialTest
         #endregion
 
                 // UNCOMMENT TO CHECK ADVANCED PART
-        /*#region advanced
-
+        
         #region Data for Advanced Level
         private static IEnumerable<TestCaseData> AddPolynomialTuplesTestCases
         {
@@ -671,7 +670,6 @@ namespace PolynomialTest
         }
         #endregion
 
-        #endregion*/
 
     }
 

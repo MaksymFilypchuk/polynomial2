@@ -71,8 +71,11 @@ namespace PolynomialObject
         /// <exception cref="PolynomialArgumentNullException">Throws when trying to member to add is null</exception>
         public void AddMember(PolynomialMember member)
         {
+ 
             if (member == null)
                 throw new PolynomialArgumentNullException();
+            if (member.Coefficient == 0)
+                throw new PolynomialArgumentException();
             if (polynomialMembers.Any(x=>Math.Abs(x.Degree - member.Degree) < Precision))
                 throw new PolynomialArgumentException();
 
@@ -86,8 +89,12 @@ namespace PolynomialObject
         /// <exception cref="PolynomialArgumentException">Throws when member to add with such degree already exist in polynomial</exception>
         public void AddMember((double degree, double coefficient) member)
         {
+    
+            if (member.coefficient == 0)
+                throw new PolynomialArgumentException();
             if (polynomialMembers.Any(x => Math.Abs(x.Degree - member.degree) < Precision))
                 throw new PolynomialArgumentException();
+
             polynomialMembers.Add(new PolynomialMember(member.degree, member.coefficient));
         }
 
@@ -144,7 +151,7 @@ namespace PolynomialObject
             {
                 var m = Find(degree);
                 if (m != null)
-                    return m.Degree;
+                    return m.Coefficient;
                 return 0;
             }
             set 
@@ -229,6 +236,10 @@ namespace PolynomialObject
         /// <exception cref="PolynomialArgumentNullException">Throws if provided polynomial is null</exception>
         public Polynomial Add(Polynomial polynomial)
         {
+            if (polynomial == null)
+            {
+                throw new PolynomialArgumentNullException();
+            }
             var result = new Polynomial(this.ToArray());
             var array = polynomial.ToArray();
             for (int i = 0; i < array.Length; i++)
@@ -267,12 +278,21 @@ namespace PolynomialObject
         /// <exception cref="PolynomialArgumentNullException">Throws if provided polynomial is null</exception>
         public Polynomial Multiply(Polynomial polynomial)
         {
-            if(polynomial == null)
+            if (polynomial == null)
             {
                 throw new PolynomialArgumentNullException();
             }
-            //todo
-            throw new NotImplementedException();
+            var mA = new Polynomial(this.ToArray()).ToArray();
+            var mB = polynomial.ToArray();
+            var mC = new Polynomial();
+            for (int i = 0; i < mA.Length; i++)
+            {
+                for (int j = 0; j < mB.Length; j++)
+                {
+                    mC.AddMember((mA[i].Degree + mB[j].Degree, mA[i].Coefficient * mB[j].Coefficient));
+                }
+            }
+            return mC;
         }
 
         /// <summary>
