@@ -289,7 +289,8 @@ namespace PolynomialObject
             {
                 for (int j = 0; j < mB.Length; j++)
                 {
-                    mC.AddMember((mA[i].Degree + mB[j].Degree, mA[i].Coefficient * mB[j].Coefficient));
+                    if(mA[i].Coefficient != 0 && mB[j].Coefficient != 0)
+                        mC.AddMember((mA[i].Degree + mB[j].Degree, mA[i].Coefficient * mB[j].Coefficient));
                 }
             }
             return mC;
