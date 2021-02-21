@@ -35,9 +35,9 @@ namespace PolynomialObject
         public Polynomial(IEnumerable<(double degree, double coefficient)> members)
         {
             polynomialMembers = new List<PolynomialMember>();
-            foreach (var member in members)
+            foreach (var (degree, coefficient) in members)
             {
-                polynomialMembers.Add(new PolynomialMember(member.degree, member.coefficient));
+                polynomialMembers.Add(new PolynomialMember(degree, coefficient));
             }
         }
 
@@ -48,7 +48,7 @@ namespace PolynomialObject
         {
             get
             {
-               return polynomialMembers.Where(x => x != null).Count();
+               return polynomialMembers.Count(x => x != null);
             }
         }
 
@@ -98,7 +98,7 @@ namespace PolynomialObject
         /// <returns>True if member has been deleted</returns>
         public bool RemoveMember(double degree)
         {
-            var m = polynomialMembers.FirstOrDefault(x => Math.Abs(x.Degree - degree) < Precision);
+            var m = Find(degree);
             if (m != null)
             {
                 polynomialMembers.Remove(m);
@@ -116,7 +116,7 @@ namespace PolynomialObject
         /// <returns>True if polynomial contains member</returns>
         public bool ContainsMember(double degree)
         {
-            var m = polynomialMembers.FirstOrDefault(x => Math.Abs(x.Degree - degree) < Precision);
+            var m = Find(degree);
             if (m != null)
                 return true;
             return false;
@@ -142,14 +142,14 @@ namespace PolynomialObject
         {
             get
             {
-                var m = polynomialMembers.FirstOrDefault(x => Math.Abs(x.Degree - degree) < Precision);
+                var m = Find(degree);
                 if (m != null)
                     return m.Degree;
                 return 0;
             }
             set 
             {
-                var monomial = polynomialMembers.FirstOrDefault(x =>Math.Abs(x.Degree - degree) < Precision);
+                var monomial = Find(degree);
                 if (value != 0)
                 {
                     if (monomial != null)
@@ -214,8 +214,11 @@ namespace PolynomialObject
         /// <exception cref="PolynomialArgumentNullException">Throws if either of provided polynomials is null</exception>
         public static Polynomial operator *(Polynomial a, Polynomial b)
         {
-            //todo
-            throw new NotImplementedException();
+            if(a == null || b == null)
+            {
+                throw new PolynomialArgumentNullException();
+            }
+            return a.Multiply(b);
         }
 
         /// <summary>
@@ -243,6 +246,10 @@ namespace PolynomialObject
         /// <exception cref="PolynomialArgumentNullException">Throws if provided polynomial is null</exception>
         public Polynomial Subtraction(Polynomial polynomial)
         {
+            if(polynomial == null)
+            {
+                throw new PolynomialArgumentNullException();
+            }
             var result = new Polynomial(this.ToArray());
             var array = polynomial.ToArray();
             for (int i = 0; i < array.Length; i++)
@@ -260,6 +267,10 @@ namespace PolynomialObject
         /// <exception cref="PolynomialArgumentNullException">Throws if provided polynomial is null</exception>
         public Polynomial Multiply(Polynomial polynomial)
         {
+            if(polynomial == null)
+            {
+                throw new PolynomialArgumentNullException();
+            }
             //todo
             throw new NotImplementedException();
         }
@@ -272,6 +283,10 @@ namespace PolynomialObject
         /// <returns>Returns new polynomial after adding</returns>
         public static Polynomial operator +(Polynomial a, (double degree, double coefficient) b)
         {
+            if(a == null)
+            {
+                throw new PolynomialArgumentNullException();
+            }
             return a.Add(b);
         }
 
@@ -283,6 +298,10 @@ namespace PolynomialObject
         /// <returns>Returns new polynomial after subtraction</returns>
         public static Polynomial operator -(Polynomial a, (double degree, double coefficient) b)
         {
+            if(a == null)
+            {
+                throw new PolynomialArgumentNullException();
+            }
             return a.Subtraction(b);
         }
 
@@ -294,8 +313,11 @@ namespace PolynomialObject
         /// <returns>Returns new polynomial after multiplication</returns>
         public static Polynomial operator *(Polynomial a, (double degree, double coefficient) b)
         {
-            //todo
-            throw new NotImplementedException();
+            if(a == null)
+            {
+                throw new PolynomialArgumentNullException();
+            }
+            return a.Multiply(b);
         }
 
         /// <summary>
@@ -315,7 +337,6 @@ namespace PolynomialObject
         /// <returns>Returns new polynomial after subtraction</returns>
         public Polynomial Subtraction((double degree, double coefficient) member)
         {
-            //todo
             return Subtraction(new Polynomial(member));
         }
 
@@ -326,8 +347,7 @@ namespace PolynomialObject
         /// <returns>Returns new polynomial after multiplication</returns>
         public Polynomial Multiply((double degree, double coefficient) member)
         {
-            //todo
-            throw new NotImplementedException();
+            return Multiply(new Polynomial(member));
         }
     }
 }
