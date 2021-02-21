@@ -17,19 +17,27 @@ namespace PolynomialObject
         public Polynomial(PolynomialMember member)
         {
             polynomialMembers = new List<PolynomialMember>();
-            polynomialMembers.Add(member);
+            if(Math.Abs(member.Coefficient)  > Precision)
+                polynomialMembers.Add(member);
         }
 
         public Polynomial(IEnumerable<PolynomialMember> members)
         {
             polynomialMembers = new List<PolynomialMember>();
-            polynomialMembers.AddRange(members);
+            foreach (var member in members)
+            {
+                if(Math.Abs(member.Coefficient) > Precision)
+                    polynomialMembers.Add(member);
+            }
         }
 
-        public Polynomial((double degree, double coefficient) member)
+        public Polynomial((double degree, double coefficient) member): base()
         {
             polynomialMembers = new List<PolynomialMember>();
-            polynomialMembers.Add(new PolynomialMember(member.degree, member.coefficient));
+            if (Math.Abs(member.coefficient) > Precision)
+            {
+                polynomialMembers.Add(new PolynomialMember(member.degree, member.coefficient));
+            }
         }
 
         public Polynomial(IEnumerable<(double degree, double coefficient)> members)
@@ -37,7 +45,8 @@ namespace PolynomialObject
             polynomialMembers = new List<PolynomialMember>();
             foreach (var (degree, coefficient) in members)
             {
-                polynomialMembers.Add(new PolynomialMember(degree, coefficient));
+                if(Math.Abs(coefficient) > Precision)
+                    polynomialMembers.Add(new PolynomialMember(degree, coefficient));
             }
         }
 
@@ -289,8 +298,11 @@ namespace PolynomialObject
             {
                 for (int j = 0; j < mB.Length; j++)
                 {
-                    if(mA[i].Coefficient != 0 && mB[j].Coefficient != 0)
-                        mC.AddMember((mA[i].Degree + mB[j].Degree, mA[i].Coefficient * mB[j].Coefficient));
+                    if (Math.Abs(mA[i].Coefficient) < Precision || Math.Abs(mA[j].Coefficient) < Precision)
+                    {
+                        continue;
+                    }
+                    mC[mA[i].Degree + mB[j].Degree] += mA[i].Coefficient * mB[j].Coefficient;
                 }
             }
             return mC;
