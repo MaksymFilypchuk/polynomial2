@@ -7,6 +7,7 @@ namespace PolynomialObject
 {
     public sealed class Polynomial
     {
+        private const double Precision = 0.00001;
         private readonly List<PolynomialMember> polynomialMembers; 
         public Polynomial()
         {
@@ -72,7 +73,7 @@ namespace PolynomialObject
         {
             if (member == null)
                 throw new PolynomialArgumentNullException();
-            if (polynomialMembers.Any(x=>x.Degree == member.Degree))
+            if (polynomialMembers.Any(x=>Math.Abs(x.Degree - member.Degree) < Precision))
                 throw new PolynomialArgumentException();
 
             polynomialMembers.Add(member);
@@ -85,7 +86,7 @@ namespace PolynomialObject
         /// <exception cref="PolynomialArgumentException">Throws when member to add with such degree already exist in polynomial</exception>
         public void AddMember((double degree, double coefficient) member)
         {
-            if (polynomialMembers.Any(x => x.Degree == member.degree))
+            if (polynomialMembers.Any(x => Math.Abs(x.Degree - member.degree) < Precision))
                 throw new PolynomialArgumentException();
             polynomialMembers.Add(new PolynomialMember(member.degree, member.coefficient));
         }
@@ -97,7 +98,7 @@ namespace PolynomialObject
         /// <returns>True if member has been deleted</returns>
         public bool RemoveMember(double degree)
         {
-            var m = polynomialMembers.FirstOrDefault(x => x.Degree == degree);
+            var m = polynomialMembers.FirstOrDefault(x => Math.Abs(x.Degree - degree) < Precision);
             if (m != null)
             {
                 polynomialMembers.Remove(m);
@@ -115,7 +116,7 @@ namespace PolynomialObject
         /// <returns>True if polynomial contains member</returns>
         public bool ContainsMember(double degree)
         {
-            var m = polynomialMembers.FirstOrDefault(x => x.Degree == degree);
+            var m = polynomialMembers.FirstOrDefault(x => Math.Abs(x.Degree - degree) < Precision);
             if (m != null)
                 return true;
             return false;
@@ -128,7 +129,7 @@ namespace PolynomialObject
         /// <returns>Returns the found member or null</returns>
         public PolynomialMember Find(double degree)
         {
-            return polynomialMembers.FirstOrDefault(x => x.Degree == degree);
+            return polynomialMembers.FirstOrDefault(x => Math.Abs(x.Degree - degree) < Precision);
         }
 
         /// <summary>
@@ -141,14 +142,14 @@ namespace PolynomialObject
         {
             get
             {
-                var m = polynomialMembers.FirstOrDefault(x => x.Degree == degree);
+                var m = polynomialMembers.FirstOrDefault(x => Math.Abs(x.Degree - degree) < Precision);
                 if (m != null)
                     return m.Degree;
                 return 0;
             }
             set 
             {
-                var monomial = polynomialMembers.FirstOrDefault(x => x.Degree == degree);
+                var monomial = polynomialMembers.FirstOrDefault(x =>Math.Abs(x.Degree - degree) < Precision);
                 if (value != 0)
                 {
                     if (monomial != null)
@@ -197,6 +198,10 @@ namespace PolynomialObject
         /// <exception cref="PolynomialArgumentNullException">Throws if either of provided polynomials is null</exception>
         public static Polynomial operator -(Polynomial a, Polynomial b)
         {
+            if(a == null || b == null)
+            {
+                throw new PolynomialArgumentNullException();
+            }
             return a.Subtraction(b);
         }
 
