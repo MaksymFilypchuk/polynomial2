@@ -186,6 +186,7 @@ namespace PolynomialObject
         /// <returns>Array with not null polynomial members</returns>
         public PolynomialMember[] ToArray()
         {
+            polynomialMembers.RemoveAll(m => m == null || Math.Abs(m.Coefficient) < Precision);
             return polynomialMembers.ToArray();
         }
 
